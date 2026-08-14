@@ -18,6 +18,8 @@ export class QuizzesService {
     });
   }
 
+
+    
   async adminFindAll() {
     return this.quizRepository.find({
       relations: {
@@ -29,6 +31,17 @@ export class QuizzesService {
     });
   }
 
+ shuffle<T>(array: T[]): T[] {
+  const shuffled = [...array];
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
   async adminFindOne(id: number) {
     const quiz = await this.quizRepository.findOne({
       where: { id },
@@ -62,6 +75,8 @@ export class QuizzesService {
     throw new NotFoundException('Quiz not found');
   }
 
+  // console.log('QUESTIONS:', quiz.questions);
+
   return {
     id: quiz.id,
     title: quiz.title,
@@ -76,10 +91,10 @@ export class QuizzesService {
       difficulty: question.difficulty,
       points: question.points,
 
-      answers: question.answers.map((answer) => ({
-        id: answer.id,
-        answerText: answer.answerText,
-      })),
+      answers: this.shuffle(question.answers).map((answer) => ({
+    id: answer.id,
+    answerText: answer.answerText,
+  })),
     })),
   };
 }
