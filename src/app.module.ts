@@ -25,7 +25,8 @@ import { ConfigModule } from '@nestjs/config';
       // entities: [],
       autoLoadEntities: true,
       synchronize: true,
-    
+      // Uses cloud connection string if provided by host
+      ...(process.env.DATABASE_URL && { url: process.env.DATABASE_URL }),
     }),
     UsersModule,
     AuthModule,
