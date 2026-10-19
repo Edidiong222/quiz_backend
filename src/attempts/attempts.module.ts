@@ -24,12 +24,8 @@ import { AttemptsController } from './attempts.controller';
     ]),
   ],
 
-  controllers: [
-    AttemptsController,
-  ],
+  controllers: [AttemptsController],
 
-  providers: [
-    AttemptsService,
-  ],
+  providers: [AttemptsService],
 })
 export class AttemptsModule {}

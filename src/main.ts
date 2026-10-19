@@ -5,6 +5,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+
+  // This a how we use validation pipes globally, this enforces the validation put it place by the class-validator
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

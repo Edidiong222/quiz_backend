@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Question } from '../questions/question.entity';
 import { QuizAttempt } from '../attempts/quiz-attempt.entity';
@@ -33,9 +28,9 @@ export class Quiz {
   })
   difficulty!: Difficulty | null;
 
-  @OneToMany(() => Question, question => question.quiz)
+  @OneToMany(() => Question, (question) => question.quiz)
   questions!: Question[];
 
-@OneToMany(() => QuizAttempt, attempt => attempt.quiz)
-attempts!: QuizAttempt[];
+  @OneToMany(() => QuizAttempt, (attempt) => attempt.quiz)
+  attempts!: QuizAttempt[];
 }

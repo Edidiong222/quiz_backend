@@ -7,10 +7,9 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(User)
-    private userReository: Repository<User>
+    private userReository: Repository<User>,
   ) {}
 
   create(createUserDto: CreateUserDto): Promise<User> {
@@ -36,7 +35,7 @@ export class UsersService {
 
   async findByEmail(email: string) {
     return this.userReository.findOne({
-      where: { email }
+      where: { email },
     });
   }
 

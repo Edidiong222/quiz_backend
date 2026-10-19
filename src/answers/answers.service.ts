@@ -22,14 +22,11 @@ export class AnswersService {
     private questionRepository: Repository<Question>,
   ) {}
 
-   async findAll() {
+  async findAll() {
     return this.answerRepository.find();
   }
 
-  async create(
-    questionId: number,
-    createAnswerDto: CreateAnswerDto,
-  ) {
+  async create(questionId: number, createAnswerDto: CreateAnswerDto) {
     const question = await this.questionRepository.findOne({
       where: {
         id: questionId,
@@ -40,7 +37,7 @@ export class AnswersService {
       throw new NotFoundException('Question not found');
     }
 
-    return this.answerRepository.manager.transaction(async manager => {
+    return this.answerRepository.manager.transaction(async (manager) => {
       if (createAnswerDto.isCorrect) {
         await manager
           .createQueryBuilder()
@@ -69,23 +66,27 @@ export class AnswersService {
       throw new NotFoundException('Answer not found');
     }
 
-    return this.answerRepository.manager.transaction(async manager => {
+    return this.answerRepository.manager.transaction(async (manager) => {
       if (updateAnswerDto.isCorrect === true) {
         await manager
           .createQueryBuilder()
           .update(Answer)
           .set({ isCorrect: false })
-          .where('"questionId" = :questionId', { questionId: answer.question.id })
+          .where('"questionId" = :questionId', {
+            questionId: answer.question.id,
+          })
           .execute();
       }
 
       if (updateAnswerDto.isCorrect === false && answer.isCorrect) {
         const otherCorrect = answer.question.answers.some(
-          item => item.id !== answer.id && item.isCorrect,
+          (item) => item.id !== answer.id && item.isCorrect,
         );
 
         if (!otherCorrect) {
-          throw new BadRequestException('A question must have one correct answer');
+          throw new BadRequestException(
+            'A question must have one correct answer',
+          );
         }
       }
 
@@ -105,7 +106,12 @@ export class AnswersService {
       throw new NotFoundException('Answer not found');
     }
 
-    if (answer.isCorrect && !answer.question.answers.some(item => item.id !== answer.id && item.isCorrect)) {
+    if (
+      answer.isCorrect &&
+      !answer.question.answers.some(
+        (item) => item.id !== answer.id && item.isCorrect,
+      )
+    ) {
       throw new BadRequestException('A question must have one correct answer');
     }
 

@@ -35,11 +35,11 @@ export class Question {
   @Column({ type: 'text', nullable: true })
   explanation!: string | null;
 
-  @ManyToOne(() => Quiz, quiz => quiz.questions, {
+  @ManyToOne(() => Quiz, (quiz) => quiz.questions, {
     onDelete: 'CASCADE',
   })
   quiz!: Quiz;
 
-  @OneToMany(() => Answer, answer => answer.question)
+  @OneToMany(() => Answer, (answer) => answer.question)
   answers!: Answer[];
 }

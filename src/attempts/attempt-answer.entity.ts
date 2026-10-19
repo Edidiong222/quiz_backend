@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { QuizAttempt } from './quiz-attempt.entity';
 import { Question } from '../questions/question.entity';
@@ -14,7 +9,7 @@ export class AttemptAnswer {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => QuizAttempt, attempt => attempt.answers, {
+  @ManyToOne(() => QuizAttempt, (attempt) => attempt.answers, {
     onDelete: 'CASCADE',
   })
   attempt!: QuizAttempt;

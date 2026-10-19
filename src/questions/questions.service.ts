@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -21,7 +18,7 @@ export class QuestionsService {
     private quizRepository: Repository<Quiz>,
   ) {}
 
-    async findAll(quizId: number) {
+  async findAll(quizId: number) {
     return this.questionRepository.find({
       where: {
         quiz: { id: quizId },
@@ -35,10 +32,7 @@ export class QuestionsService {
     });
   }
 
-  async create(
-    quizId: number,
-    createQuestionDto: CreateQuestionDto,
-  ) {
+  async create(quizId: number, createQuestionDto: CreateQuestionDto) {
     const quiz = await this.quizRepository.findOne({
       where: {
         id: quizId,

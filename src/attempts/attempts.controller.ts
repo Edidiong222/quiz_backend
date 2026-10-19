@@ -25,9 +25,7 @@ interface AuthenticatedRequest {
 @Controller('attempts')
 @UseGuards(JwtAuthGuard)
 export class AttemptsController {
-  constructor(
-    private attemptsService: AttemptsService,
-  ) {}
+  constructor(private attemptsService: AttemptsService) {}
 
   @Get('leaderboard')
   leaderboard() {
@@ -52,10 +50,7 @@ export class AttemptsController {
     @Req() req: AuthenticatedRequest,
     @Param('quizId', ParseIntPipe) quizId: number,
   ) {
-    return this.attemptsService.startQuiz(
-      req.user.id,
-      quizId,
-    );
+    return this.attemptsService.startQuiz(req.user.id, quizId);
   }
 
   @Post(':attemptId/submit')

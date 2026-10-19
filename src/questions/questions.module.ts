@@ -7,22 +7,11 @@ import { QuestionsService } from './questions.service';
 import { QuestionsController } from './questions.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Question,
-      Quiz,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Question, Quiz])],
 
-  providers: [
-    QuestionsService,
-  ],
-  controllers: [
-  QuestionsController,
-],
+  providers: [QuestionsService],
+  controllers: [QuestionsController],
 
-  exports: [
-    QuestionsService,
-  ],
+  exports: [QuestionsService],
 })
 export class QuestionsModule {}

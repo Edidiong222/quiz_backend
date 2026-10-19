@@ -101,74 +101,70 @@ export class AttemptsService {
     };
   }
   async leaderboard() {
-  const attempts = await this.attemptRepository.find({
-    where: {
-      completedAt: Not(IsNull()),
-    },
-    relations: {
-      user: true,
-    },
-  });
+    const attempts = await this.attemptRepository.find({
+      where: {
+        completedAt: Not(IsNull()),
+      },
+      relations: {
+        user: true,
+      },
+    });
 
-  const users = new Map<number, LeaderboardStats>();
+    const users = new Map<number, LeaderboardStats>();
 
-  for (const attempt of attempts) {
-    const userId = attempt.user.id;
+    for (const attempt of attempts) {
+      const userId = attempt.user.id;
 
-    if (!users.has(userId)) {
-      users.set(userId, {
-        userId,
-        name: attempt.user.name,
-        bestScore: 0,
-        averageScore: 0,
-        highScores: 0,
-        testsTaken: 0,
-        totalPercentage: 0,
-      });
+      if (!users.has(userId)) {
+        users.set(userId, {
+          userId,
+          name: attempt.user.name,
+          bestScore: 0,
+          averageScore: 0,
+          highScores: 0,
+          testsTaken: 0,
+          totalPercentage: 0,
+        });
+      }
+
+      const stats = users.get(userId)!;
+
+      stats.testsTaken++;
+
+      stats.totalPercentage += attempt.percentage;
+
+      if (attempt.percentage > stats.bestScore) {
+        stats.bestScore = attempt.percentage;
+      }
+
+      if (attempt.percentage >= 80) {
+        stats.highScores++;
+      }
     }
 
-    const stats = users.get(userId)!;
-
-    stats.testsTaken++;
-
-    stats.totalPercentage += attempt.percentage;
-
-    if (attempt.percentage > stats.bestScore) {
-      stats.bestScore = attempt.percentage;
-    }
-
-    if (attempt.percentage >= 80) {
-      stats.highScores++;
-    }
-  }
-
-  const leaderboard = Array.from(users.values()).map(
-    user => ({
+    const leaderboard = Array.from(users.values()).map((user) => ({
       ...user,
-      averageScore: Number(
-        (user.totalPercentage / user.testsTaken).toFixed(2),
-      ),
+      averageScore: Number((user.totalPercentage / user.testsTaken).toFixed(2)),
       totalPercentage: undefined,
-    }),
-  );
+    }));
 
-  leaderboard.sort((a, b) => {
-    if (b.bestScore !== a.bestScore) {
-      return b.bestScore - a.bestScore;
-    }
+    leaderboard.sort((a, b) => {
+      if (b.bestScore !== a.bestScore) {
+        return b.bestScore - a.bestScore;
+      }
 
-    if (b.highScores !== a.highScores) {
-      return b.highScores - a.highScores;
-    }
+      if (b.highScores !== a.highScores) {
+        return b.highScores - a.highScores;
+      }
 
-    return b.averageScore - a.averageScore;
-  });
+      return b.averageScore - a.averageScore;
+    });
 
-  return leaderboard.map((user, index) => ({
-    rank: index + 1,
-    ...user,
-  }));
-}
+    return leaderboard.map((user, index) => ({
+      rank: index + 1,
+      ...user,
+    }));
+  }
 
   async history(userId: number) {
     const attempts = await this.attemptRepository.find({
@@ -176,15 +172,15 @@ export class AttemptsService {
         user: { id: userId },
       },
       relations: {
-      quiz: true,
-      answers: true,
+        quiz: true,
+        answers: true,
       },
       order: {
         startedAt: 'DESC',
       },
     });
 
-    return attempts.map(attempt => ({
+    return attempts.map((attempt) => ({
       id: attempt.id,
       quiz: {
         id: attempt.quiz.id,
@@ -199,7 +195,8 @@ export class AttemptsService {
       percentage: attempt.percentage,
       correctAnswers: attempt.correctAnswers,
       wrongAnswers: attempt.wrongAnswers,
-      totalQuestions: attempt.totalQuestions || attempt.correctAnswers + attempt.wrongAnswers,
+      totalQuestions:
+        attempt.totalQuestions || attempt.correctAnswers + attempt.wrongAnswers,
       answeredQuestions: attempt.answeredQuestions || attempt.answers.length,
       incorrectAnswers: attempt.incorrectAnswers || attempt.wrongAnswers,
       unansweredQuestions: attempt.unansweredQuestions,
@@ -241,7 +238,7 @@ export class AttemptsService {
     }
 
     const attemptAnswerByQuestion = new Map(
-      attempt.answers.map(answer => [answer.question.id, answer]),
+      attempt.answers.map((answer) => [answer.question.id, answer]),
     );
 
     return {
@@ -260,16 +257,22 @@ export class AttemptsService {
       correctAnswers: attempt.correctAnswers,
       wrongAnswers: attempt.wrongAnswers,
       totalQuestions: attempt.totalQuestions || quiz.questions.length,
-      answeredQuestions: attempt.answeredQuestions || attempt.answers.filter(answer => answer.selectedAnswer).length,
+      answeredQuestions:
+        attempt.answeredQuestions ||
+        attempt.answers.filter((answer) => answer.selectedAnswer).length,
       incorrectAnswers: attempt.incorrectAnswers || attempt.wrongAnswers,
-      unansweredQuestions: attempt.unansweredQuestions || Math.max(0, quiz.questions.length - attempt.answers.filter(answer => answer.selectedAnswer).length),
+      unansweredQuestions:
+        attempt.unansweredQuestions ||
+        Math.max(
+          0,
+          quiz.questions.length -
+            attempt.answers.filter((answer) => answer.selectedAnswer).length,
+        ),
       startedAt: attempt.startedAt,
       completedAt: attempt.completedAt,
-      answers: quiz.questions.map(question => {
+      answers: quiz.questions.map((question) => {
         const answer = attemptAnswerByQuestion.get(question.id);
-        const correctAnswer = question?.answers.find(
-          item => item.isCorrect,
-        );
+        const correctAnswer = question?.answers.find((item) => item.isCorrect);
 
         return {
           id: answer?.id ?? question.id,
@@ -320,9 +323,7 @@ export class AttemptsService {
     }
 
     if (attempt.completedAt) {
-      throw new BadRequestException(
-        'This quiz has already been submitted',
-      );
+      throw new BadRequestException('This quiz has already been submitted');
     }
 
     const questions = attempt.quiz.questions;
@@ -355,9 +356,7 @@ export class AttemptsService {
       const submittedAnswerId = submittedByQuestion.get(question.id);
 
       const selectedAnswer = submittedAnswerId
-        ? question.answers.find(
-            answer => answer.id === submittedAnswerId,
-          )
+        ? question.answers.find((answer) => answer.id === submittedAnswerId)
         : null;
 
       if (submittedAnswerId && !selectedAnswer) {
@@ -368,9 +367,7 @@ export class AttemptsService {
 
       const isCorrect = selectedAnswer?.isCorrect ?? false;
 
-      const pointsEarned = isCorrect
-        ? question.points
-        : 0;
+      const pointsEarned = isCorrect ? question.points : 0;
 
       if (isCorrect) {
         score += pointsEarned;
@@ -381,26 +378,18 @@ export class AttemptsService {
         unansweredQuestions++;
       }
 
-      const attemptAnswer =
-        this.attemptAnswerRepository.create({
-          attempt,
-          question,
-          selectedAnswer,
-          isCorrect,
-          pointsEarned,
-        });
+      const attemptAnswer = this.attemptAnswerRepository.create({
+        attempt,
+        question,
+        selectedAnswer,
+        isCorrect,
+        pointsEarned,
+      });
 
-      await this.attemptAnswerRepository.save(
-        attemptAnswer,
-      );
+      await this.attemptAnswerRepository.save(attemptAnswer);
     }
 
-    
-
-    const percentage =
-      totalPoints === 0
-        ? 0
-        : (score / totalPoints) * 100;
+    const percentage = totalPoints === 0 ? 0 : (score / totalPoints) * 100;
 
     attempt.score = score;
     attempt.totalPoints = totalPoints;

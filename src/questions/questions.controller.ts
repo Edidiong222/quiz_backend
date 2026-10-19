@@ -17,13 +17,10 @@ import { AdminGuard } from '../auth/guards/admin.guard';
 
 @Controller('quizzes')
 export class QuestionsController {
-  constructor(
-    private questionsService: QuestionsService,
-  ) {}
+  constructor(private questionsService: QuestionsService) {}
 
-
-  @Get(":quizId/questions")
-  findAll(@Param('quizId', ParseIntPipe) quizId: number){
+  @Get(':quizId/questions')
+  findAll(@Param('quizId', ParseIntPipe) quizId: number) {
     return this.questionsService.findAll(quizId);
   }
 
@@ -33,10 +30,7 @@ export class QuestionsController {
     @Param('quizId', ParseIntPipe) quizId: number,
     @Body() createQuestionDto: CreateQuestionDto,
   ) {
-    return this.questionsService.create(
-      quizId,
-      createQuestionDto,
-    );
+    return this.questionsService.create(quizId, createQuestionDto);
   }
 
   @Patch('questions/:questionId')
@@ -50,11 +44,7 @@ export class QuestionsController {
 
   @Delete('questions/:questionId')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  removeQuestion(
-    @Param('questionId', ParseIntPipe) questionId: number,
-  ) {
+  removeQuestion(@Param('questionId', ParseIntPipe) questionId: number) {
     return this.questionsService.remove(questionId);
   }
-
-  
 }

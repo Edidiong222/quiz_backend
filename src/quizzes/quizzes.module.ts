@@ -5,19 +5,11 @@ import { Quiz } from './quiz.entity';
 import { QuizzesController } from './quizzes.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Quiz]),
-  ],
-    controllers: [
-    QuizzesController,
-  ],
+  imports: [TypeOrmModule.forFeature([Quiz])],
+  controllers: [QuizzesController],
 
-   providers: [
-    QuizzesService,
-  ],
+  providers: [QuizzesService],
 
-  exports: [
-    QuizzesService,
-  ],
+  exports: [QuizzesService],
 })
 export class QuizzesModule {}

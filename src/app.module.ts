@@ -10,7 +10,6 @@ import { AnswersModule } from './answers/answers.module';
 import { AttemptsModule } from './attempts/attempts.module';
 import { ConfigModule } from '@nestjs/config';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -33,9 +32,9 @@ import { ConfigModule } from '@nestjs/config';
     QuizzesModule,
     QuestionsModule,
     AnswersModule,
-    AttemptsModule
+    AttemptsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

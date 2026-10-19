@@ -21,10 +21,10 @@ export class QuizAttempt {
   })
   user!: User;
 
-@ManyToOne(() => Quiz, quiz => quiz.attempts, {
-  onDelete: 'CASCADE',
-})
-quiz!: Quiz;
+  @ManyToOne(() => Quiz, (quiz) => quiz.attempts, {
+    onDelete: 'CASCADE',
+  })
+  quiz!: Quiz;
 
   @Column({ default: 0 })
   score!: number;
@@ -59,6 +59,6 @@ quiz!: Quiz;
   @Column({ type: 'timestamp', nullable: true })
   completedAt!: Date | null;
 
-  @OneToMany(() => AttemptAnswer, answer => answer.attempt)
+  @OneToMany(() => AttemptAnswer, (answer) => answer.attempt)
   answers!: AttemptAnswer[];
 }

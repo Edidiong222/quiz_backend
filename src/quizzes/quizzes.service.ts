@@ -18,8 +18,6 @@ export class QuizzesService {
     });
   }
 
-
-    
   async adminFindAll() {
     return this.quizRepository.find({
       relations: {
@@ -31,17 +29,17 @@ export class QuizzesService {
     });
   }
 
- shuffle<T>(array: T[]): T[] {
-  const shuffled = [...array];
+  shuffle<T>(array: T[]): T[] {
+    const shuffled = [...array];
 
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
 
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled;
   }
-
-  return shuffled;
-}
   async adminFindOne(id: number) {
     const quiz = await this.quizRepository.findOne({
       where: { id },
@@ -59,45 +57,45 @@ export class QuizzesService {
     return quiz;
   }
 
- async findOne(id: number) {
-  const quiz = await this.quizRepository.findOne({
-    where: {
-      id,
-    },
-    relations: {
-      questions: {
-        answers: true,
+  async findOne(id: number) {
+    const quiz = await this.quizRepository.findOne({
+      where: {
+        id,
       },
-    },
-  });
+      relations: {
+        questions: {
+          answers: true,
+        },
+      },
+    });
 
-  if (!quiz) {
-    throw new NotFoundException('Quiz not found');
+    if (!quiz) {
+      throw new NotFoundException('Quiz not found');
+    }
+
+    // console.log('QUESTIONS:', quiz.questions);
+
+    return {
+      id: quiz.id,
+      title: quiz.title,
+      description: quiz.description,
+      timeLimit: quiz.timeLimit,
+      category: quiz.category,
+      difficulty: quiz.difficulty,
+
+      questions: quiz.questions.map((question) => ({
+        id: question.id,
+        questionText: question.questionText,
+        difficulty: question.difficulty,
+        points: question.points,
+
+        answers: this.shuffle(question.answers).map((answer) => ({
+          id: answer.id,
+          answerText: answer.answerText,
+        })),
+      })),
+    };
   }
-
-  // console.log('QUESTIONS:', quiz.questions);
-
-  return {
-    id: quiz.id,
-    title: quiz.title,
-    description: quiz.description,
-    timeLimit: quiz.timeLimit,
-    category: quiz.category,
-    difficulty: quiz.difficulty,
-
-    questions: quiz.questions.map((question) => ({
-      id: question.id,
-      questionText: question.questionText,
-      difficulty: question.difficulty,
-      points: question.points,
-
-      answers: this.shuffle(question.answers).map((answer) => ({
-    id: answer.id,
-    answerText: answer.answerText,
-  })),
-    })),
-  };
-}
   async create(createQuizDto: CreateQuizDto) {
     const quiz = this.quizRepository.create(createQuizDto);
 
@@ -127,6 +125,4 @@ export class QuizzesService {
 
     return { deleted: true };
   }
-
-
 }

@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { Question } from '../questions/question.entity';
 
@@ -18,7 +13,7 @@ export class Answer {
   @Column()
   isCorrect!: boolean;
 
-  @ManyToOne(() => Question, question => question.answers, {
+  @ManyToOne(() => Question, (question) => question.answers, {
     onDelete: 'CASCADE',
   })
   question!: Question;

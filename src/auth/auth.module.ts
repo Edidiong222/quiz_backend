@@ -6,18 +6,18 @@ import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
-
 @Module({
-  imports: [UsersModule,
+  imports: [
+    UsersModule,
 
     JwtModule.register({
       secret: 'my-super-secret-key',
       signOptions: {
-        expiresIn: '1h',
+        expiresIn: '5h',
       },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy,]
+  providers: [AuthService, JwtStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}

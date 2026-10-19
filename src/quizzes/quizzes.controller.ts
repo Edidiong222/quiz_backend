@@ -1,7 +1,12 @@
 import {
   Body,
   Controller,
-  Post, Get, Param, Patch, Delete, UseGuards,
+  Post,
+  Get,
+  Param,
+  Patch,
+  Delete,
+  UseGuards,
   ParseIntPipe,
 } from '@nestjs/common';
 
@@ -12,9 +17,7 @@ import { AdminGuard } from '../auth/guards/admin.guard';
 
 @Controller('quizzes')
 export class QuizzesController {
-  constructor(
-    private quizzesService: QuizzesService,
-  ) { }
+  constructor(private quizzesService: QuizzesService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, AdminGuard)
@@ -35,16 +38,12 @@ export class QuizzesController {
 
   @Get('admin/:id')
   @UseGuards(JwtAuthGuard, AdminGuard)
-  adminFindOne(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  adminFindOne(@Param('id', ParseIntPipe) id: number) {
     return this.quizzesService.adminFindOne(id);
   }
 
   @Get(':id')
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.quizzesService.findOne(id);
   }
 
